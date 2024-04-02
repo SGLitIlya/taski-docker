@@ -15,9 +15,9 @@ jobs:
         # Указываем имя тестовой базы, имя и пароль пользователя в открытом виде,
         # ведь эта база будет работать только во время прогона тестов
         env:
-          POSTGRES_USER: django_user
-          POSTGRES_PASSWORD: django_password
-          POSTGRES_DB: django_db
+          POSTGRES_USER: kitty_user
+          POSTGRES_PASSWORD: kitty_password
+          POSTGRES_DB: kitty_db
         ports:
           - 5432:5432
         # Эта конструкция описывает проверку готовности сервиса postgres
@@ -36,15 +36,11 @@ jobs:
         python -m pip install --upgrade pip 
         pip install flake8==6.0.0 flake8-isort==6.0.0
         pip install -r ./backend/requirements.txt 
-    # Этот шаг дополним переменными для доступа к БД
     - name: Test with flake8 and django tests
-      # Добавляем env-переменные для доступа к БД
       env:
-        POSTGRES_USER: django_user
-        POSTGRES_PASSWORD: django_password
-        POSTGRES_DB: django_db
-        # Сервер БД запущен в Docker, но его порт проброшен на хост
-        # Поэтому подключаемся к 127.0.0.1:5432
+        POSTGRES_USER: kitty_user
+        POSTGRES_PASSWORD: kitty_password
+        POSTGRES_DB: kitty_db
         DB_HOST: 127.0.0.1
         DB_PORT: 5432
       run: |
@@ -148,7 +144,7 @@ jobs:
       - name: Push to DockerHub
         uses: docker/build-push-action@v4
         with:
-          context: ./gateway/
+          context: ./nginx/
           push: true
           # Тут вместо username должен быть ваш логин на Docker Hub
           tags: ${{ secrets.DOCKER_USERNAME }}/taski_gateway:latest
